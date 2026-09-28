@@ -1,0 +1,15 @@
+name: labsheet6_q6
+description: LabSheet 6 Question 6
+publish_to: "none"
+environment:
+  sdk: ^3.13.0
+dependencies:
+  flutter:
+    sdk: flutter
+  shared_preferences: ^2.5.5
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+flutter:
+  uses-material-design: true
