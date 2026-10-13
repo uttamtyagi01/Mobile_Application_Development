@@ -1,0 +1,25 @@
+﻿# Android Studio / IntelliJ generated files
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# Flutter / Dart generated files
+.dart_tool/
+.packages
+.pub/
+.flutter-plugins
+.flutter-plugins-dependencies
+build/
+
+# Android / Gradle local files
+.gradle/
+**/local.properties
+**/android/.gradle/
+
+# iOS generated files
+**/ios/Flutter/.last_build_id
+
+# Operating system files
+.DS_Store
+Thumbs.db
