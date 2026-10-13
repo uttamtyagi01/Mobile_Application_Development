@@ -1,0 +1,16 @@
+name: labsheet7_11searchbyrollnumber
+description: Lab Sheet 7 - Search by Roll Number
+publish_to: "none"
+environment:
+  sdk: ">=3.0.0 <4.0.0"
+dependencies:
+  flutter:
+    sdk: flutter
+  sqflite: ^2.4.2
+  path: ^1.9.1
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+flutter:
+  uses-material-design: true
