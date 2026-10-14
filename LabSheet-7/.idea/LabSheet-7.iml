@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module type="JAVA_MODULE" version="4">
+  <component name="NewModuleRootManager" inherit-compiler-output="true">
+    <exclude-output />
+    <content url="file://$MODULE_DIR$">
+      <excludeFolder url="file://$MODULE_DIR$/q10_clear_all_students/.dart_tool" />
+      <excludeFolder url="file://$MODULE_DIR$/q10_clear_all_students/.pub" />
+      <excludeFolder url="file://$MODULE_DIR$/q10_clear_all_students/build" />
+      <excludeFolder url="file://$MODULE_DIR$/q11_search_by_roll_number/.dart_tool" />
+      <excludeFolder url="file://$MODULE_DIR$/q11_search_by_roll_number/.pub" />
+      <excludeFolder url="file://$MODULE_DIR$/q11_search_by_roll_number/build" />
+      <excludeFolder url="file://$MODULE_DIR$/q12_filter_by_course/.dart_tool" />
+      <excludeFolder url="file://$MODULE_DIR$/q12_filter_by_course/.pub" />
+      <excludeFolder url="file://$MODULE_DIR$/q12_filter_by_course/build" />
+      <excludeFolder url="file://$MODULE_DIR$/q13_sort_students_by_name/.dart_tool" />
+      <excludeFolder url="file://$MODULE_DIR$/q13_sort_students_by_name/.pub" />
+      <excludeFolder url="file://$MODULE_DIR$/q13_sort_students_by_name/build" />
+      <excludeFolder url="file://$MODULE_DIR$/q14_count_students/.dart_tool" />
+      <excludeFolder url="file://$MODULE_DIR$/q14_count_students/.pub" />
+      <excludeFolder url="file://$MODULE_DIR$/q14_count_students/build" />
+      <excludeFolder url="file://$MODULE_DIR$/q15_student_model/.dart_tool" />
+      <excludeFolder url="file://$MODULE_DIR$/q15_student_model/.pub" />
+      <excludeFolder url="file://$MODULE_DIR$/q15_student_model/build" />
+      <excludeFolder url="file://$MODULE_DIR$/q16_database_helper/.dart_tool" />
+      <excludeFolder url="file://$MODULE_DIR$/q16_database_helper/.pub" />
+      <excludeFolder url="file://$MODULE_DIR$/q16_database_helper/build" />
+      <excludeFolder url="file://$MODULE_DIR$/q17_student_management_app/.dart_tool" />
+      <excludeFolder url="file://$MODULE_DIR$/q17_student_management_app/.pub" />
+      <excludeFolder url="file://$MODULE_DIR$/q17_student_management_app/build" />
+      <excludeFolder url="file://$MODULE_DIR$/q1_create_database/.dart_tool" />
+      <excludeFolder url="file://$MODULE_DIR$/q1_create_database/.pub" />
+      <excludeFolder url="file://$MODULE_DIR$/q1_create_database/build" />
+      <excludeFolder url="file://$MODULE_DIR$/q2_create_students_table/.dart_tool" />
+      <excludeFolder url="file://$MODULE_DIR$/q2_create_students_table/.pub" />
+      <excludeFolder url="file://$MODULE_DIR$/q2_create_students_table/build" />
+      <excludeFolder url="file://$MODULE_DIR$/q3_insert_student/.dart_tool" />
+      <excludeFolder url="file://$MODULE_DIR$/q3_insert_student/.pub" />
+      <excludeFolder url="file://$MODULE_DIR$/q3_insert_student/build" />
+      <excludeFolder url="file://$MODULE_DIR$/q4_insert_student_textfield/.dart_tool" />
+      <excludeFolder url="file://$MODULE_DIR$/q4_insert_student_textfield/.pub" />
+      <excludeFolder url="file://$MODULE_DIR$/q4_insert_student_textfield/build" />
+      <excludeFolder url="file://$MODULE_DIR$/q5_raw_insert/.dart_tool" />
+      <excludeFolder url="file://$MODULE_DIR$/q5_raw_insert/.pub" />
+      <excludeFolder url="file://$MODULE_DIR$/q5_raw_insert/build" />
+      <excludeFolder url="file://$MODULE_DIR$/q6_display_students_query/.dart_tool" />
+      <excludeFolder url="file://$MODULE_DIR$/q6_display_students_query/.pub" />
+      <excludeFolder url="file://$MODULE_DIR$/q6_display_students_query/build" />
+      <excludeFolder url="file://$MODULE_DIR$/q7_display_students_rawquery/.dart_tool" />
+      <excludeFolder url="file://$MODULE_DIR$/q7_display_students_rawquery/.pub" />
+      <excludeFolder url="file://$MODULE_DIR$/q7_display_students_rawquery/build" />
+      <excludeFolder url="file://$MODULE_DIR$/q8_update_student/.dart_tool" />
+      <excludeFolder url="file://$MODULE_DIR$/q8_update_student/.pub" />
+      <excludeFolder url="file://$MODULE_DIR$/q8_update_student/build" />
+      <excludeFolder url="file://$MODULE_DIR$/q9_delete_student/.dart_tool" />
+      <excludeFolder url="file://$MODULE_DIR$/q9_delete_student/.pub" />
+      <excludeFolder url="file://$MODULE_DIR$/q9_delete_student/build" />
+    </content>
+    <orderEntry type="inheritedJdk" />
+    <orderEntry type="sourceFolder" forTests="false" />
+  </component>
+</module>
