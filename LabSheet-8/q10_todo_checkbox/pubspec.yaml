@@ -1,5 +1,5 @@
 name: q10_todo_checkbox
-description: Question-wise solution for LabSheet-8, question 10.
+description: Question-wise solution for LabSheet-8, question 10: To-do Checklist.
 publish_to: 'none'
 version: 1.0.0+1
 environment:

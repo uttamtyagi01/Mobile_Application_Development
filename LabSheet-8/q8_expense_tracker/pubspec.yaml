@@ -1,5 +1,5 @@
 name: q8_expense_tracker
-description: Question-wise solution for LabSheet-8, question 8.
+description: Question-wise solution for LabSheet-8, question 8: Expense Tracker.
 publish_to: 'none'
 version: 1.0.0+1
 environment:

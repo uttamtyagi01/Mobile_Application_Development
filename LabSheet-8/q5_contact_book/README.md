@@ -1,10 +1,18 @@
-# LabSheet-8 — Question 5
+# LabSheet-8 — Question 5: Contact Book
 
-**Original question:** Create a Flutter Contact Book application that stores contacts (name and phone number) in an SQLite database and displays them in a list.
+## Aim
+Contacts are stored locally.
 
 ## Run
-1. Open this folder as a Flutter project in Android Studio.
+1. Open this question folder in VS Code or Android Studio.
 2. Run `flutter pub get`.
-3. Run `flutter run`.
+3. Start an Android emulator or connect a device.
+4. Run `flutter run`.
 
-SQLite is stored locally on the device. This self-contained exercise app uses a reusable records table to demonstrate the requested database/UI operation. The visible labels and exercise statement are specific to this question.
+## Implementation
+- Independent Flutter app for Question 5.
+- Uses SQLite (`sqflite`) to store records on the device.
+- Uses a question-specific title, fields, and interactions for **Contact Book**.
+- Database file: `labsheet8_q5.db`.
+
+Note: Questions 11–12 are local demonstration forms, not production authentication. For real registration/login, use a secure backend and never store plaintext passwords.

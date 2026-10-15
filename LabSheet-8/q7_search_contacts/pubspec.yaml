@@ -1,5 +1,5 @@
 name: q7_search_contacts
-description: Question-wise solution for LabSheet-8, question 7.
+description: Question-wise solution for LabSheet-8, question 7: Search Contacts.
 publish_to: 'none'
 version: 1.0.0+1
 environment:

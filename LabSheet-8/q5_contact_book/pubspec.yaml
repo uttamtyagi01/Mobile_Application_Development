@@ -1,5 +1,5 @@
 name: q5_contact_book
-description: Question-wise solution for LabSheet-8, question 5.
+description: Question-wise solution for LabSheet-8, question 5: Contact Book.
 publish_to: 'none'
 version: 1.0.0+1
 environment:

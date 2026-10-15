@@ -1,5 +1,5 @@
 name: q3_swipe_delete_note
-description: Question-wise solution for LabSheet-8, question 3.
+description: Question-wise solution for LabSheet-8, question 3: Swipe to Delete Notes.
 publish_to: 'none'
 version: 1.0.0+1
 environment:

@@ -1,5 +1,5 @@
 name: q15_product_inventory
-description: Question-wise solution for LabSheet-8, question 15.
+description: Question-wise solution for LabSheet-8, question 15: Product Inventory.
 publish_to: 'none'
 version: 1.0.0+1
 environment:

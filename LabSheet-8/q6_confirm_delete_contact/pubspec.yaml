@@ -1,5 +1,5 @@
 name: q6_confirm_delete_contact
-description: Question-wise solution for LabSheet-8, question 6.
+description: Question-wise solution for LabSheet-8, question 6: Confirm Contact Delete.
 publish_to: 'none'
 version: 1.0.0+1
 environment:

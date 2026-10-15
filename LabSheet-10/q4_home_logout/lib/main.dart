@@ -2,22 +2,22 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-void main() async { WidgetsFlutterBinding.ensureInitialized(); await Firebase.initializeApp(); runApp(const FirebaseLabApp()); }
-class FirebaseLabApp extends StatelessWidget { const FirebaseLabApp({super.key}); @override Widget build(BuildContext context)=>MaterialApp(debugShowCheckedModeBanner:false,theme:ThemeData(colorSchemeSeed:Colors.deepPurple,useMaterial3:true),home:const FirebaseHome()); }
-class FirebaseHome extends StatefulWidget { const FirebaseHome({super.key}); @override State<FirebaseHome> createState()=>_FirebaseHomeState(); }
-class _FirebaseHomeState extends State<FirebaseHome> {
- final _email=TextEditingController(),_password=TextEditingController(),_name=TextEditingController(),_roll=TextEditingController(),_course=TextEditingController();
- final _auth=FirebaseAuth.instance; final _db=FirebaseFirestore.instance; String _status='Firebase initialized';
- Future<void> _authAction(String action) async { try { if(action=='register'){await _auth.createUserWithEmailAndPassword(email:_email.text.trim(),password:_password.text);} else if(action=='login'){await _auth.signInWithEmailAndPassword(email:_email.text.trim(),password:_password.text);} else if(action=='reset'){await _auth.sendPasswordResetEmail(email:_email.text.trim()); _say('Password reset email sent');} else {await _auth.signOut();} } on FirebaseAuthException catch(e){_say(e.message??e.code);} catch(e){_say('$e');} }
- void _say(String s){if(mounted){setState(()=>_status=s);ScaffoldMessenger.of(context).showSnackBar(SnackBar(content:Text(s)));}}
- Future<void> _add() async {if(_name.text.trim().isEmpty){_say('Enter a name/title');return;} try {await _db.collection('students').add({'name':_name.text.trim(),'roll':_roll.text.trim(),'course':_course.text.trim(),'owner':_auth.currentUser?.uid,'createdAt':FieldValue.serverTimestamp()});_name.clear();_roll.clear();_course.clear();_say('Saved to Cloud Firestore');}catch(e){_say('$e');}}
- Future<void> _delete(String id) async {await _db.collection('students').doc(id).delete();_say('Deleted');}
- Future<void> _update(String id,Map<String,dynamic> data) async {await _db.collection('students').doc(id).update({'name':'${data['name']} (updated)'});_say('Updated');}
- @override void dispose(){_email.dispose();_password.dispose();_name.dispose();_roll.dispose();_course.dispose();super.dispose();}
- @override Widget build(BuildContext context)=>Scaffold(appBar:AppBar(title:const Text('LabSheet-10 Q4'),actions:[if(_auth.currentUser!=null)IconButton(onPressed:()=>_authAction('logout'),icon:const Icon(Icons.logout))]),body:Padding(padding:const EdgeInsets.all(16),child:Column(crossAxisAlignment:CrossAxisAlignment.stretch,children:[Text('Create a Flutter application to display the logged-in user’s email on the Home screen and provide a Logout button.'),Text(_status),
- if(true && _auth.currentUser==null) ...[TextField(controller:_email,decoration:const InputDecoration(labelText:'Email')),TextField(controller:_password,obscureText:true,decoration:const InputDecoration(labelText:'Password')),Wrap(spacing:8,children:[FilledButton(onPressed:()=>_authAction('register'),child:const Text('Register')),FilledButton(onPressed:()=>_authAction('login'),child:const Text('Login')),TextButton(onPressed:()=>_authAction('reset'),child:const Text('Reset password'))])],
- if(true && _auth.currentUser!=null) Text('Signed in as ${_auth.currentUser!.email}'),
- if(false && (!false || _auth.currentUser!=null)) ...[TextField(controller:_name,decoration:const InputDecoration(labelText:'Name / title')),TextField(controller:_roll,decoration:const InputDecoration(labelText:'Roll / content')),TextField(controller:_course,decoration:const InputDecoration(labelText:'Course / extra')),FilledButton(onPressed:_add,child:const Text('Add record'))],
- Expanded(child:StreamBuilder<QuerySnapshot<Map<String,dynamic>>>(stream:_db.collection('students').orderBy('createdAt',descending:true).snapshots(),builder:(context,snapshot){if(snapshot.hasError)return Text('Firestore error: ${snapshot.error}');if(!snapshot.hasData)return const Center(child:CircularProgressIndicator());final docs=snapshot.data!.docs; if(docs.isEmpty)return const Center(child:Text('No records yet'));return ListView.builder(itemCount:docs.length,itemBuilder:(context,i){final d=docs[i];final data=d.data();return Card(child:ListTile(title:Text('${data['name']??'Record'}'),subtitle:Text('${data['roll']??''} • ${data['course']??''}'),trailing:Wrap(mainAxisSize:MainAxisSize.min,children:[IconButton(onPressed:()=>_update(d.id,data),icon:const Icon(Icons.edit)),IconButton(onPressed:()=>_delete(d.id),icon:const Icon(Icons.delete))])));});})),
- ])));
+
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
+  runApp(const LabApp());
+}
+
+class LabApp extends StatelessWidget {
+  const LabApp({super.key});
+  @override
+  Widget build(BuildContext context) => MaterialApp(
+    debugShowCheckedModeBanner: false,
+    theme: ThemeData(colorSchemeSeed: Colors.indigo, useMaterial3: true),
+    home: const HomePage(),
+  );
+}
+
+class HomePage extends StatelessWidget { const HomePage({super.key}); @override Widget build(BuildContext context)=>Scaffold(appBar:AppBar(title:const Text('Q4 Home and Logout')),body:Center(child:StreamBuilder<User?>(stream:FirebaseAuth.instance.authStateChanges(),builder:(context,s){if(s.connectionState==ConnectionState.waiting)return const CircularProgressIndicator();final user=s.data;if(user==null)return const Text('No user is signed in. Complete Q2 or Q3 first.');return Column(mainAxisSize:MainAxisSize.min,children:[const Icon(Icons.account_circle,size:72),Text('Logged in email: ${user.email}',style:const TextStyle(fontSize:18)),const SizedBox(height:16),FilledButton.icon(onPressed:()=>FirebaseAuth.instance.signOut(),icon:const Icon(Icons.logout),label:const Text('Logout')]);}))); }
 }

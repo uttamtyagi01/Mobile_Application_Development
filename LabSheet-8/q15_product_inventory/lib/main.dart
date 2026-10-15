@@ -9,7 +9,7 @@ class LabApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) => MaterialApp(
     debugShowCheckedModeBanner: false,
-    title: 'LabSheet-8 Q15',
+    title: 'LabSheet-8 Q15: Product Inventory',
     theme: ThemeData(colorSchemeSeed: Colors.indigo, useMaterial3: true),
     home: const RecordsPage(),
   );
@@ -22,104 +22,104 @@ class RecordsPage extends StatefulWidget {
 }
 
 class _RecordsPageState extends State<RecordsPage> {
-  Database? _db;
-  final _first = TextEditingController();
-  final _second = TextEditingController();
-  final _third = TextEditingController();
-  List<Map<String, Object?>> _rows = [];
-  String _filter = '';
-  String _course = 'All';
-  String _message = 'Ready';
-  static const _table = 'records';
+  Database? db;
+  final first = TextEditingController();
+  final second = TextEditingController();
+  final third = TextEditingController();
+  final search = TextEditingController();
+  List<Map<String, Object?>> rows = [];
+  bool loading = true;
+  String query = '';
+  static const table = 'products';
+  static const question = 15;
 
   @override
-  void initState() { super.initState(); _openDb(); }
-  Future<void> _openDb() async {
-    final path = p.join(await getDatabasesPath(), 'labsheet_8_15.db');
-    _db = await openDatabase(path, version: 1, onCreate: (db, version) async {
-      await db.execute('CREATE TABLE records(id INTEGER PRIMARY KEY AUTOINCREMENT, first TEXT NOT NULL, second TEXT NOT NULL, third TEXT NOT NULL)');
+  void initState() { super.initState(); _initDb(); }
+  Future<void> _initDb() async {
+    final path = p.join(await getDatabasesPath(), 'labsheet8_q15.db');
+    db = await openDatabase(path, version: 1, onCreate: (database, version) async {
+      await database.execute('CREATE TABLE $table (id INTEGER PRIMARY KEY AUTOINCREMENT, first TEXT NOT NULL, second TEXT NOT NULL, third TEXT NOT NULL, done INTEGER NOT NULL DEFAULT 0)');
     });
-    await _seedIfNeeded();
     await _load();
-    if (mounted) setState(() => _message = 'SQLite database and table are ready');
-  }
-  Future<void> _seedIfNeeded() async {
-    final count = Sqflite.firstIntValue(await _db!.rawQuery('SELECT COUNT(*) FROM records')) ?? 0;
-    if (count == 0 && true) {
-      await _db!.insert(_table, {'first':'Demo Record','second':'1001','third':'Computer Science'});
-    }
+    if (mounted) setState(() => loading = false);
   }
   Future<void> _load() async {
-    if (_db == null) return;
-    List<Map<String,Object?>> result;
-    if ('inventory' == 'rawQuery') {
-      result = await _db!.rawQuery('SELECT * FROM records ORDER BY first ASC');
-    } else if ('inventory' == 'count') {
-      final count = Sqflite.firstIntValue(await _db!.rawQuery('SELECT COUNT(*) FROM records')) ?? 0;
-      result = [{'id':0,'first':'Total records','second':'$count','third':'records'}];
-    } else if ('inventory' == 'sum') {
-      final total = Sqflite.firstIntValue(await _db!.rawQuery("SELECT CAST(COALESCE(SUM(CAST(second AS REAL)),0) AS INTEGER) FROM records")) ?? 0;
-      result = [{'id':0,'first':'Total amount','second':'$total','third':'sum'}];
-    } else if ('inventory' == 'search') {
-      result = await _db!.query(_table, where: 'first LIKE ?', whereArgs: ['%$_filter%'], orderBy: 'first ASC');
-    } else if ('inventory' == 'roll') {
-      result = await _db!.query(_table, where: 'second = ?', whereArgs: [_filter], orderBy: 'first ASC');
-    } else if ('inventory' == 'course') {
-      result = _course == 'All' ? await _db!.query(_table) : await _db!.query(_table, where: 'third = ?', whereArgs: [_course]);
-    } else {
-      result = await _db!.query(_table, orderBy: 'inventory' == 'orderBy' ? 'first ASC' : 'id DESC');
-    }
-    if (mounted) setState(() => _rows = result);
+    if (db == null) return;
+    final result = await db!.query(table, orderBy: 'id DESC');
+    if (mounted) setState(() => rows = result.where((r) => ('${r['first']} ${r['second']} ${r['third']}').toLowerCase().contains(query.toLowerCase())).toList());
   }
-  Future<void> _save() async {
-    final a = _first.text.trim(), b = _second.text.trim(), c = _third.text.trim();
-    if (a.isEmpty || b.isEmpty) { _toast('Please fill the first two fields'); return; }
-    if (_db == null) return;
-    if ('inventory' == 'rawInsert') {
-      await _db!.rawInsert('INSERT INTO records(first, second, third) VALUES(?, ?, ?)', [a,b,c]);
-    } else {
-      await _db!.insert(_table, {'first':a,'second':b,'third':c});
-    }
-    _first.clear(); _second.clear(); _third.clear();
-    await _load(); _toast('Record saved successfully');
+  Future<void> _add() async {
+    if (first.text.trim().isEmpty || second.text.trim().isEmpty) { _message('Please complete the required fields.'); return; }
+    if (question == 13 && !RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$').hasMatch(second.text.trim())) { _message('Enter a valid email address.'); return; }
+    if ((question == 8 || question == 9 || question == 15 || question == 16) && double.tryParse(second.text.trim()) == null) { _message('Enter a valid numeric value in Quantity.'); return; }
+    await db!.insert(table, {'first': first.text.trim(), 'second': second.text.trim(), 'third': third.text.trim()});
+    first.clear(); second.clear(); third.clear(); await _load();
+    if (mounted) Navigator.of(context).maybePop();
+    _message('Saved successfully.');
   }
-  Future<void> _edit(Map<String,Object?> row) async {
-    final a = TextEditingController(text: '${row['first'] ?? ''}');
-    final b = TextEditingController(text: '${row['second'] ?? ''}');
-    final c = TextEditingController(text: '${row['third'] ?? ''}');
-    final ok = await showDialog<bool>(context: context, builder: (ctx) => AlertDialog(
-      title: const Text('Update record'), content: Column(mainAxisSize: MainAxisSize.min, children: [TextField(controller:a, decoration: const InputDecoration(labelText:'Name / title')), TextField(controller:b, decoration: const InputDecoration(labelText:'Roll / detail')), TextField(controller:c, decoration: const InputDecoration(labelText:'Course / extra'))]),
-      actions: [TextButton(onPressed:()=>Navigator.pop(ctx,false), child:const Text('Cancel')), FilledButton(onPressed:()=>Navigator.pop(ctx,true), child:const Text('Save'))],));
-    if (ok == true && _db != null) { await _db!.update(_table, {'first':a.text,'second':b.text,'third':c.text}, where:'id = ?', whereArgs:[row['id']]); await _load(); _toast('Updated'); }
+  Future<void> _showEditor([Map<String, Object?>? row]) async {
+    first.text = '${row?['first'] ?? ''}'; second.text = '${row?['second'] ?? ''}'; third.text = '${row?['third'] ?? ''}';
+    final isEdit = row != null;
+    await showDialog<void>(context: context, builder: (ctx) => AlertDialog(
+      title: Text(isEdit ? 'Edit $plural item' : '$addbtn'),
+      content: SingleChildScrollView(child: Column(mainAxisSize: MainAxisSize.min, children: [
+        TextField(controller: first, decoration: const InputDecoration(labelText: '$f1')),
+        TextField(controller: second, decoration: const InputDecoration(labelText: '$f2'), keyboardType: (question == 8 || question == 9 || question == 15 || question == 16) ? const TextInputType.numberWithOptions(decimal: true) : TextInputType.text, obscureText: question == 11 && false),
+        TextField(controller: third, decoration: const InputDecoration(labelText: '$f3')),
+      ])),
+      actions: [TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancel')), FilledButton(onPressed: () async {
+        if (first.text.trim().isEmpty || second.text.trim().isEmpty) { _message('Please complete the required fields.'); return; }
+        if (question == 13 && !RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$').hasMatch(second.text.trim())) { _message('Enter a valid email address.'); return; }
+        if (isEdit) { await db!.update(table, {'first': first.text.trim(), 'second': second.text.trim(), 'third': third.text.trim()}, where: 'id = ?', whereArgs: [row['id']]); }
+        else { await db!.insert(table, {'first': first.text.trim(), 'second': second.text.trim(), 'third': third.text.trim()}); }
+        if (ctx.mounted) Navigator.pop(ctx); first.clear(); second.clear(); third.clear(); await _load();
+      }, child: const Text('Save'))],
+    ));
   }
-  Future<void> _delete(Map<String,Object?> row) async {
-    if (_db == null) return;
-    await _db!.delete(_table, where:'id = ?', whereArgs:[row['id']]); await _load(); _toast('Record deleted');
+  Future<void> _delete(Map<String, Object?> row) async {
+    Future<void> perform() async { await db!.delete(table, where: 'id = ?', whereArgs: [row['id']]); await _load(); }
+    if (question == 6) {
+      final ok = await showDialog<bool>(context: context, builder: (ctx) => AlertDialog(title: const Text('Delete contact?'), content: Text('Delete ${row['first']} permanently?'), actions: [TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Cancel')), FilledButton(onPressed: () => Navigator.pop(ctx, true), child: const Text('Delete'))]));
+      if (ok == true) await perform();
+    } else { await perform(); }
   }
-  Future<void> _clear() async { await _db?.delete(_table); await _load(); _toast('All records cleared'); }
-  void _toast(String s) { if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content:Text(s))); }
-  @override
-  void dispose() { _first.dispose(); _second.dispose(); _third.dispose(); super.dispose(); }
+  Future<void> _toggle(Map<String, Object?> row) async { await db!.update(table, {'done': (row['done'] as int? ?? 0) == 1 ? 0 : 1}, where: 'id = ?', whereArgs: [row['id']]); await _load(); }
+  void _message(String value) { if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(value))); }
 
   @override
-  Widget build(BuildContext context) => Scaffold(
-    appBar: AppBar(title: const Text('LabSheet-8 Q15'), actions: [if (false) IconButton(tooltip:'Clear all', onPressed:_clear, icon:const Icon(Icons.delete_sweep))]),
-    body: _db == null ? const Center(child:CircularProgressIndicator()) : Padding(padding: const EdgeInsets.all(16), child: Column(crossAxisAlignment:CrossAxisAlignment.stretch, children: [
-      Text('Create a Flutter Product Inventory application that stores products (name, quantity, and price) in an SQLite database and allows adding, updating, and deleting products.', style: Theme.of(context).textTheme.bodyMedium), const SizedBox(height:8),
-      if (true) ...[
-        TextField(controller:_first, decoration:InputDecoration(labelText:'Name', border:const OutlineInputBorder())), const SizedBox(height:8),
-        TextField(controller:_second, decoration:InputDecoration(labelText:'Quantity', border:const OutlineInputBorder())), const SizedBox(height:8),
-        TextField(controller:_third, decoration:InputDecoration(labelText:'Price (optional)', border:const OutlineInputBorder())), const SizedBox(height:8),
-        FilledButton.icon(onPressed:_save, icon:const Icon(Icons.add), label:const Text('Insert record')),
-      ],
-      if ('inventory' == 'search' || 'inventory' == 'roll') ...[
-        TextField(onChanged:(v){_filter=v; _load();}, decoration:InputDecoration(labelText: 'inventory' == 'roll' ? 'Search by roll / detail' : 'Search by name / title', prefixIcon:const Icon(Icons.search), border:const OutlineInputBorder())), const SizedBox(height:8),
-      ],
-      if ('inventory' == 'course') ...[
-        DropdownButton<String>(value:_course, isExpanded:true, items:const ['All','Computer Science','IT','BCA'].map((s)=>DropdownMenuItem(value:s,child:Text(s))).toList(), onChanged:(v){if(v!=null){setState(()=>_course=v);_load();}}),
-      ],
-      Text(_message, style:Theme.of(context).textTheme.labelMedium), const SizedBox(height:8),
-      Expanded(child: _rows.isEmpty ? const Center(child:Text('No records found')) : ListView.builder(itemCount:_rows.length, itemBuilder:(context,i){final row=_rows[i]; return Dismissible(key:ValueKey(row['id']), direction: false ? DismissDirection.endToStart : DismissDirection.none, onDismissed:(_)=>_delete(row), background:Container(color:Colors.red, alignment:Alignment.centerRight, padding:const EdgeInsets.all(16), child:const Icon(Icons.delete,color:Colors.white)), child:Card(child:ListTile(title:Text('${row['first'] ?? ''}'), subtitle:Text('${row['second'] ?? ''}  ${row['third'] ?? ''}'), leading:CircleAvatar(child:Text('${row['id'] ?? ''}')), onTap:()=>_edit(row), trailing:IconButton(icon:const Icon(Icons.delete_outline), onPressed:()=>_delete(row))))); })),
-    ])),
-  );
+  void dispose() { first.dispose(); second.dispose(); third.dispose(); search.dispose(); db?.close(); super.dispose(); }
+  @override
+  Widget build(BuildContext context) {
+    final total = rows.fold<double>(0, (sum, r) => sum + (double.tryParse('${r['second']}') ?? 0));
+    return Scaffold(
+      appBar: AppBar(title: const Text('Q15. Product Inventory'), actions: [IconButton(tooltip: 'Refresh', onPressed: _load, icon: const Icon(Icons.refresh))]),
+      body: Column(children: [
+        Padding(padding: const EdgeInsets.all(12), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Text('Track product stock and price.'),
+          if (question == 4 || question == 7 || question == 17) ...[
+            const SizedBox(height: 8), TextField(controller: search, decoration: const InputDecoration(prefixIcon: Icon(Icons.search), labelText: 'Search', border: OutlineInputBorder()), onChanged: (v) { query = v; _load(); }),
+          ],
+          if (question == 9 || question == 16) Padding(padding: const EdgeInsets.only(top: 8), child: Text('Total value: ${total.toStringAsFixed(2)}', style: Theme.of(context).textTheme.titleMedium)),
+        ])),
+        Expanded(child: loading ? const Center(child: CircularProgressIndicator()) : rows.isEmpty ? const Center(child: Text('No records yet. Tap + to add one.')) : ListView.builder(itemCount: rows.length, itemBuilder: (context, index) {
+          final row = rows[index];
+          final tile = ListTile(
+            leading: question == 10 ? Checkbox(value: (row['done'] as int? ?? 0) == 1, onChanged: (_) => _toggle(row)) : CircleAvatar(child: Text('${index + 1}')),
+            title: Text('${row['first']}', style: question == 10 && (row['done'] as int? ?? 0) == 1 ? const TextStyle(decoration: TextDecoration.lineThrough) : null),
+            subtitle: Text('${row['second']}${('${row['third']}').isNotEmpty ? ' • ${row['third']}' : ''}'),
+            onTap: () {
+              if (question == 14) { showDialog<void>(context: context, builder: (ctx) => AlertDialog(title: Text('${row['first']}'), content: Text('Roll number: ${row['second']}\nCourse: ${row['third']}'), actions: [TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Close')), TextButton(onPressed: () { Navigator.pop(ctx); _showEditor(row); }, child: const Text('Edit'))])); }
+              else if (question == 2 || question == 17) { _showEditor(row); }
+              else if (question == 11 || question == 12) { _message('Local demo record: ${row['first']}'); }
+              else { _showEditor(row); }
+            },
+            trailing: IconButton(icon: const Icon(Icons.delete_outline), tooltip: 'Delete', onPressed: () => _delete(row)),
+          );
+          if (question == 3) return Dismissible(key: ValueKey(row['id']), direction: DismissDirection.horizontal, background: Container(color: Colors.red, alignment: Alignment.centerLeft, padding: const EdgeInsets.all(16), child: const Icon(Icons.delete, color: Colors.white)), secondaryBackground: Container(color: Colors.red, alignment: Alignment.centerRight, padding: const EdgeInsets.all(16), child: const Icon(Icons.delete, color: Colors.white)), onDismissed: (_) => _delete(row), child: Card(margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 4), child: tile));
+          return Card(margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 4), child: tile);
+        })),
+      ]),
+      floatingActionButton: FloatingActionButton.extended(onPressed: () => _showEditor(), icon: const Icon(Icons.add), label: const Text('Add')),
+    );
+  }
 }

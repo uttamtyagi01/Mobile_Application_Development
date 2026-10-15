@@ -1,10 +1,13 @@
-# LabSheet-10 — Question 14
+# LabSheet-10 — Q14 Firestore Notes
 
-**Original question:** Create a Flutter Notes application in which a logged-in user can add, view, and delete notes stored in Cloud Firestore.
+**Question:** Create, edit, list and delete notes in Cloud Firestore.
 
 ## Run
-1. Open this folder as a Flutter project in Android Studio.
-2. Run `flutter pub get`.
-3. Run `flutter run`.
+1. Open this folder as a Flutter project.
+2. Configure Firebase for the target platform (see below).
+3. Run `flutter pub get`, then `flutter run`.
 
-**Firebase setup required:** create a Firebase project, register your Android app, add `google-services.json` under `android/app/`, configure the Google Services Gradle plugin as instructed by Firebase, enable Email/Password Authentication when needed, create Cloud Firestore, and set appropriate development rules. For production, secure Firestore with authentication and rules.
+## Firebase setup
+Create a Firebase project and register the Android app using its exact application ID. Place `google-services.json` in `android/app/` and configure the Google Services Gradle plugin according to the current Firebase Flutter setup instructions. Enable Email/Password Authentication for Q2–Q7 and create a Cloud Firestore database for Q8–Q15. Configure secure Firestore rules before production use.
+
+These are independent Flutter examples. Each folder has its own `lib/main.dart`; open and run one question at a time.

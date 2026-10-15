@@ -2,22 +2,23 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-void main() async { WidgetsFlutterBinding.ensureInitialized(); await Firebase.initializeApp(); runApp(const FirebaseLabApp()); }
-class FirebaseLabApp extends StatelessWidget { const FirebaseLabApp({super.key}); @override Widget build(BuildContext context)=>MaterialApp(debugShowCheckedModeBanner:false,theme:ThemeData(colorSchemeSeed:Colors.deepPurple,useMaterial3:true),home:const FirebaseHome()); }
-class FirebaseHome extends StatefulWidget { const FirebaseHome({super.key}); @override State<FirebaseHome> createState()=>_FirebaseHomeState(); }
-class _FirebaseHomeState extends State<FirebaseHome> {
- final _email=TextEditingController(),_password=TextEditingController(),_name=TextEditingController(),_roll=TextEditingController(),_course=TextEditingController();
- final _auth=FirebaseAuth.instance; final _db=FirebaseFirestore.instance; String _status='Firebase initialized';
- Future<void> _authAction(String action) async { try { if(action=='register'){await _auth.createUserWithEmailAndPassword(email:_email.text.trim(),password:_password.text);} else if(action=='login'){await _auth.signInWithEmailAndPassword(email:_email.text.trim(),password:_password.text);} else if(action=='reset'){await _auth.sendPasswordResetEmail(email:_email.text.trim()); _say('Password reset email sent');} else {await _auth.signOut();} } on FirebaseAuthException catch(e){_say(e.message??e.code);} catch(e){_say('$e');} }
- void _say(String s){if(mounted){setState(()=>_status=s);ScaffoldMessenger.of(context).showSnackBar(SnackBar(content:Text(s)));}}
- Future<void> _add() async {if(_name.text.trim().isEmpty){_say('Enter a name/title');return;} try {await _db.collection('students').add({'name':_name.text.trim(),'roll':_roll.text.trim(),'course':_course.text.trim(),'owner':_auth.currentUser?.uid,'createdAt':FieldValue.serverTimestamp()});_name.clear();_roll.clear();_course.clear();_say('Saved to Cloud Firestore');}catch(e){_say('$e');}}
- Future<void> _delete(String id) async {await _db.collection('students').doc(id).delete();_say('Deleted');}
- Future<void> _update(String id,Map<String,dynamic> data) async {await _db.collection('students').doc(id).update({'name':'${data['name']} (updated)'});_say('Updated');}
- @override void dispose(){_email.dispose();_password.dispose();_name.dispose();_roll.dispose();_course.dispose();super.dispose();}
- @override Widget build(BuildContext context)=>Scaffold(appBar:AppBar(title:const Text('LabSheet-10 Q12'),actions:[if(_auth.currentUser!=null)IconButton(onPressed:()=>_authAction('logout'),icon:const Icon(Icons.logout))]),body:Padding(padding:const EdgeInsets.all(16),child:Column(crossAxisAlignment:CrossAxisAlignment.stretch,children:[Text('Create a Flutter application to display the students of a selected course from Cloud Firestore using the where() query.'),Text(_status),
- if(false && _auth.currentUser==null) ...[TextField(controller:_email,decoration:const InputDecoration(labelText:'Email')),TextField(controller:_password,obscureText:true,decoration:const InputDecoration(labelText:'Password')),Wrap(spacing:8,children:[FilledButton(onPressed:()=>_authAction('register'),child:const Text('Register')),FilledButton(onPressed:()=>_authAction('login'),child:const Text('Login')),TextButton(onPressed:()=>_authAction('reset'),child:const Text('Reset password'))])],
- if(false && _auth.currentUser!=null) Text('Signed in as ${_auth.currentUser!.email}'),
- if(false && (!false || _auth.currentUser!=null)) ...[TextField(controller:_name,decoration:const InputDecoration(labelText:'Name / title')),TextField(controller:_roll,decoration:const InputDecoration(labelText:'Roll / content')),TextField(controller:_course,decoration:const InputDecoration(labelText:'Course / extra')),FilledButton(onPressed:_add,child:const Text('Add record'))],
- Expanded(child:StreamBuilder<QuerySnapshot<Map<String,dynamic>>>(stream:_db.collection('students').orderBy('createdAt',descending:true).snapshots(),builder:(context,snapshot){if(snapshot.hasError)return Text('Firestore error: ${snapshot.error}');if(!snapshot.hasData)return const Center(child:CircularProgressIndicator());final docs=snapshot.data!.docs; if(docs.isEmpty)return const Center(child:Text('No records yet'));return ListView.builder(itemCount:docs.length,itemBuilder:(context,i){final d=docs[i];final data=d.data();return Card(child:ListTile(title:Text('${data['name']??'Record'}'),subtitle:Text('${data['roll']??''} • ${data['course']??''}'),trailing:Wrap(mainAxisSize:MainAxisSize.min,children:[IconButton(onPressed:()=>_update(d.id,data),icon:const Icon(Icons.edit)),IconButton(onPressed:()=>_delete(d.id),icon:const Icon(Icons.delete))])));});})),
- ])));
+
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
+  runApp(const LabApp());
+}
+
+class LabApp extends StatelessWidget {
+  const LabApp({super.key});
+  @override
+  Widget build(BuildContext context) => MaterialApp(
+    debugShowCheckedModeBanner: false,
+    theme: ThemeData(colorSchemeSeed: Colors.indigo, useMaterial3: true),
+    home: const FilterCoursePage(),
+  );
+}
+
+class FilterCoursePage extends StatefulWidget{const FilterCoursePage({super.key});@override State<FilterCoursePage> createState()=>_FilterCoursePageState();}
+class _FilterCoursePageState extends State<FilterCoursePage>{String course='BCA';@override Widget build(BuildContext context)=>Scaffold(appBar:AppBar(title:const Text('Q12 Filter by Course')),body:Column(children:[Padding(padding:const EdgeInsets.all(12),child:DropdownButtonFormField<String>(value:course,decoration:const InputDecoration(labelText:'Select course'),items:const ['BCA','B.Tech','MCA','BSc'].map((c)=>DropdownMenuItem(value:c,child:Text(c))).toList(),onChanged:(v)=>setState(()=>course=v!))),Expanded(child:StreamBuilder<QuerySnapshot<Map<String,dynamic>>>(stream:FirebaseFirestore.instance.collection('students').where('course',isEqualTo:course).snapshots(),builder:(context,s){if(s.hasError)return Text('Query error: ${s.error}');if(!s.hasData)return const Center(child:CircularProgressIndicator());if(s.data!.docs.isEmpty)return Center(child:Text('No students in $course'));return ListView(children:s.data!.docs.map((d)=>ListTile(title:Text('${d.data()['name']??''}),subtitle:Text('${d.data()['roll']??''}'))).toList());}))]));}
 }

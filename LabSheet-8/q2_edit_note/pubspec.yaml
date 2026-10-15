@@ -1,5 +1,5 @@
 name: q2_edit_note
-description: Question-wise solution for LabSheet-8, question 2.
+description: Question-wise solution for LabSheet-8, question 2: Edit Note.
 publish_to: 'none'
 version: 1.0.0+1
 environment:

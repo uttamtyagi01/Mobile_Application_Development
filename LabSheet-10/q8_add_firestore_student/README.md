@@ -1,10 +1,13 @@
-# LabSheet-10 — Question 8
+# LabSheet-10 — Q8 Add Firestore Student
 
-**Original question:** Create a Flutter application to add a student record (name, roll number, and course) to a Cloud Firestore collection.
+**Question:** Add a student record to Cloud Firestore.
 
 ## Run
-1. Open this folder as a Flutter project in Android Studio.
-2. Run `flutter pub get`.
-3. Run `flutter run`.
+1. Open this folder as a Flutter project.
+2. Configure Firebase for the target platform (see below).
+3. Run `flutter pub get`, then `flutter run`.
 
-**Firebase setup required:** create a Firebase project, register your Android app, add `google-services.json` under `android/app/`, configure the Google Services Gradle plugin as instructed by Firebase, enable Email/Password Authentication when needed, create Cloud Firestore, and set appropriate development rules. For production, secure Firestore with authentication and rules.
+## Firebase setup
+Create a Firebase project and register the Android app using its exact application ID. Place `google-services.json` in `android/app/` and configure the Google Services Gradle plugin according to the current Firebase Flutter setup instructions. Enable Email/Password Authentication for Q2–Q7 and create a Cloud Firestore database for Q8–Q15. Configure secure Firestore rules before production use.
+
+These are independent Flutter examples. Each folder has its own `lib/main.dart`; open and run one question at a time.
